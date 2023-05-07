@@ -18,15 +18,16 @@ def main():
     sequence_N = 100
     number = 1
     results = []
+    original_sequences = []
     original_sequence1 = list('0' * 99 + '1')
     random.shuffle(original_sequence1)
-    original_sequence2 = list("Попов" + '0' * 95)
-    original_sequence3 = list("Попов" + '0' * 95)
+    original_sequence2 = list("Popov" + '0' * 95)
+    original_sequence3 = list("Popov" + '0' * 95)
     random.shuffle(original_sequence3)
-    original_sequence4 = ["Попов529"[i % len("Попов529")] for i in range(sequence_N)]
-    original_sequence5 = list("По529") * 20
+    original_sequence4 = ["Popov529"[i % len("Popov529")] for i in range(sequence_N)]
+    original_sequence5 = list("Po529") * 20
     random.shuffle(original_sequence5)
-    original_sequence6 = [random.choice("По") for _ in range(int(0.7 * sequence_N))] + \
+    original_sequence6 = [random.choice("Po") for _ in range(int(0.7 * sequence_N))] + \
                          [random.choice("529") for _ in range(int(0.3 * sequence_N))]
     random.shuffle(original_sequence6)
     original_sequence7 = [random.choice(ascii_lowercase + digits) for _ in range(sequence_N)]
@@ -35,6 +36,7 @@ def main():
     for original_sequence in (original_sequence1, original_sequence2, original_sequence3, original_sequence4,
                               original_sequence5, original_sequence6, original_sequence7, original_sequence8):
         original_sequence = ''.join(original_sequence)
+        original_sequences.append(original_sequence)
         sequence_alphabet_size = len(set(original_sequence))
         original_sequence_size = len(original_sequence)
         counts = collections.Counter(original_sequence)
@@ -47,9 +49,6 @@ def main():
         entropy = -sum(p * math.log2(p) for p in probability.values())
         source_excess = 1 - entropy / math.log2(sequence_alphabet_size) if sequence_alphabet_size > 1 else 1
         results.append([sequence_alphabet_size, round(entropy, 2), round(source_excess, 2), uniformity])
-        with open("sequence.txt", 'a', encoding="utf-8") as file:
-            file.write(f"originalSequence {number}:\nПослідовність: {original_sequence}\n")
-            file.close()
         with open("resultsSequence.txt", 'a', encoding="utf-8") as file:
             file.write(f"originalSequence {number}:\nПослідовність: {original_sequence}\n"
                        f"Розмір послідовності: {original_sequence_size} byte\nРозмір алфавіту: {sequence_alphabet_size}\n"
@@ -58,6 +57,9 @@ def main():
                        f"Надмірність джерела: {source_excess}\n")
             file.close()
         number += 1
+    with open("sequence.txt", 'w', encoding="utf-8") as file:
+        file.write(str(original_sequences))
+        file.close()
     headers = ['Розмір алфавіту', 'Ентропія', 'Надмірність', 'Ймовірність']
     row = [f"Послідовність {n}" for n in range(1, number)]
     createTable(results=results, headers=headers, row=row)
